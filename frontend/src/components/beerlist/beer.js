@@ -22,14 +22,18 @@ const { Meta } = Card;
     store_id: "13877"
     style: "American Stout"
  */
-
-function Beer(props) {
+/**
+ * TODO: Clean this page up
+ * 
+ * @param {*} props 
+ */
+function Beer({beer}) {
     const [loading, setLoading] = useState(false);
     const [visible, setVisible] = useState(false);
     const [rateVisible, setRateVisible] = useState(false);
 
     const [value, setValue] = useState(0);
-    const beer = props.beer;
+    // const beer = props.beer;
     const desc = ["terrible", "bad", "normal", "good", "wonderful"];
 
     function ModalDescription() {
@@ -67,40 +71,34 @@ function Beer(props) {
         setLoading(true);
         requestOptions.body = JSON.stringify({
             beername: beer.name,
-            username: "RichardTrevorrow",
+            username: "RichardTrevorrow", // TODO: leave this out. Have the backend verify who the user is. (also setup sign up / login page)
             rating: value,
+            style: beer.style,
+            description: beer.description,
         });
-        console.log(requestOptions)
         fetch("http://localhost:5000/users/tasted", requestOptions)
             .then((response) => response.json())
-            .then((data) => message.success(data, 4), (errMsg) => message.error(errMsg, 4));
-        // client
-        //     .post("users/check_in", {
-        //         name: beer.name,
-        //         date: new Date().toDateString(),
-        //         rating: value,
-        //     })
-        //     .then((res) => {
-        //         console.log(res);
-                setLoading(false);
-                setVisible(false);
-                setRateVisible(false);
-        //     });
+            .then(
+                (data) => {
+                    message.success(data, 4);
+                    setLoading(false);
+                    setVisible(false);
+                    setRateVisible(false);
+                },
+                (errMsg) => {
+                    console.log(errMsg)
+                    message.error(errMsg, 4);
+                    setLoading(false);
+                    setVisible(false);
+                    setRateVisible(false);
+                }
+            );
     };
 
     const handleCancel = () => {
         setVisible(false);
         setRateVisible(false);
     };
-
-    // const getPercentage = () => {
-    // const percentage = beer.description.match(/\d{1,2}.?(\d{0,1})+(\%|b)/g);
-    // return percentage
-    //     ? percentage.filter((match) =>
-    //           parseFloat(match.substring(0, match.length - 1)) < 50
-    //       )
-    //     : "";
-    // };
 
     return (
         <List.Item

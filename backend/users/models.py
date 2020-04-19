@@ -10,13 +10,15 @@ class User(models.Model):
 
     def __str__(self):
         return self.username
-    
+
 class BeersTasted(models.Model):
     beername = models.TextField()
     rating = models.TextField()
-    # city = models.TextField()
-    # description = models.TextField()
+    style = models.TextField()
+    description = models.TextField()
     user = models.ForeignKey(User, related_name="user", on_delete=models.SET_NULL, null=True)
+
+    # TODO: translate created time to season. i.e: 1,2,3,4
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True) # when the beers was tasted by the user
 

@@ -76,6 +76,7 @@ class Initiators:
             else:
                 obj['isNC'] = False
 
+            obj['description'] = obj['description'].replace('<p>', '').replace('</p>', '')
         # set unique types
         self.breweries = list(dict.fromkeys(breweries))
         self.styles = list(dict.fromkeys(styles))
