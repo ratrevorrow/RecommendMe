@@ -3,6 +3,8 @@
 
 # backend files
 backend/env
+backend/main/.env
+backend/main/__pycache__/*
 
 # personal sql scripts
 sql

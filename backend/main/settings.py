@@ -11,16 +11,19 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 """
 
 import os
+from dotenv import load_dotenv
+load_dotenv()
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
+SECRET_KEY = os.environ['SECRET_KEY']
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '=j!)fb_t*ntzixbyls8g#r$xp!xp2e75&86wl34q%41pq8qnzh'
+
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -92,11 +95,11 @@ WSGI_APPLICATION = 'main.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'richard_db', # '<db_name>',
-        'USER': 'trevrica', # '<db_username>',
-        'PASSWORD': 'jellow', #'<password>',
-        'HOST': '127.0.0.1', # '<db_hostname_or_ip>',
-        'PORT': '5432', #'<db_port>',
+        'NAME': os.environ['NAME'],
+        'USER': os.environ['USER'], # '<db_username>',
+        'PASSWORD': os.environ['PASSWORD'], #'<password>',
+        'HOST': os.environ['HOST'], # '<db_hostname_or_ip>',
+        'PORT': os.environ['PORT'], #'<db_port>',
     }
 }
 
