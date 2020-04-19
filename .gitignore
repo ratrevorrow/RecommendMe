@@ -1,0 +1,13 @@
+# vscode settings
+.vscode
+
+# backend files
+backend/env
+
+# personal sql scripts
+sql
+
+# frontend files
+frontend/package-lock.json
+frontend/yarn-lock.json
+frontend/node_modules

@@ -1,0 +1,47 @@
+.scrolling-wrapper-flexbox {
+    position: relative;
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: scroll;
+    height: 100%;
+    width: 100%;
+    /* margin-top: 5%; */
+    -webkit-overflow-scrolling: touch;
+    background: white;
+}
+
+.beer-style {
+    display: block;
+    width: 100%;
+    height: 100%;
+    /* background-color: rgb(165, 177, 211); */
+    font-weight: bold;
+    font-size: 30px;
+    text-align: center;
+}
+
+div.scrollBeerlist {
+    background-color: white;
+    overflow: auto;
+    white-space: nowrap;
+}
+
+.inline-block {
+  display: inline-block;
+}
+
+.fl {
+    float: left;
+}
+
+.fr {
+    float: right;
+}
+
+.block {
+  display: block;
+}
+
+.ta-center {
+  text-align: center;
+}
