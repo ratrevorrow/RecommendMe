@@ -13,6 +13,7 @@ import json
 from django.db.models import Count
 from django.core.serializers.json import DjangoJSONEncoder
 import sys
+from operator import itemgetter
 
 # Create your views here.
 
@@ -50,23 +51,42 @@ def add_beer_tasted(request):
 @api_view(['GET'])
 def get_tasted_beers(request):
     # TODO: implement cleaner way to retrieve data and return it
-    data = BeersTasted.objects.values('beername', 'rating', 'created_at', 'style', 'description')
+    data = BeersTasted.objects.values(
+        'beername', 'rating', 'created_at', 'style', 'description').order_by('created_at')
     # print(BeersTasted.objects.values('beername').annotate(the_count=Count('beername')))
 
     data = json.loads(json.dumps(list(data), cls=DjangoJSONEncoder))
     # data = json.loads(ss.serialize('json', data, fields=('beername',))) #BeersTasted.objects.all()))
 
-    obj = []
+    beers_tasted = []
+    preprocess = dict()
+
     for item in data:
-        obj.append({
-            'beername': item['beername'],
-            'rating': item['rating'],
-            'style': item['style'],
-            'description': item['description'],
-            # get date without time. [1] is time
-            'date': item['created_at'].split('T')[0],
+        item['date'] = item['created_at'].split('T')[0]
+        beers_tasted.append(item)
+
+        if item['style'] in preprocess:
+            preprocess[item['style']] += 1
+        else:
+            preprocess[item['style']] = 1
+
+    graphdata = []
+
+    for style, count in preprocess.items():
+        graphdata.append({
+            'name': style,
+            'count': count
         })
-    return JsonResponse(obj, status=200, safe=False)
+
+    graphdata.sort(key=itemgetter('count'), reverse=True)
+    
+    returnObject = {
+        'beers': beers_tasted,
+        'graphdata': graphdata
+    }
+
+    return JsonResponse(returnObject, status=200, safe=False)
+
 
 @api_view(['GET'])
 def recommend_me(request):

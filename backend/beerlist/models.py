@@ -109,6 +109,9 @@ class Initiators:
     def get_beerlist(self):
         return self.beerlist
 
+    def get_styles(self):
+        return self.styles
+
     def get_everything(self):
         return {
             "breweries": self.breweries,

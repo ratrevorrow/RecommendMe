@@ -17,3 +17,8 @@ initiators.initiate_everything()
 def get_everything(request):
     # return Response(initiators.get_everything())
     return JsonResponse(initiators.get_everything(), status=200)
+
+@api_view(['GET'])
+def get_styles(request):
+    return JsonResponse(initiators.get_styles(), status=200, safe=False)
+
