@@ -30,21 +30,24 @@ DEBUG = True
 
 CSRF_COOKIE_NAME = "csrftoken"
 
-ALLOWED_HOSTS = []
+# CSRF_COOKIE_SECURE = False
+
+# ALLOWED_HOSTS = ['0.0.0.0', 'localhost', '127.0.0.1', '*']
+ALLOWED_HOSTS = ['*']
 
 # Either use this:
 
 CORS_ORIGIN_ALLOW_ALL = True
 
+# CORS_ALLOW_CREDENTIALS = True
+
 # Or this:
 # CORS_ORIGIN_ALLOW_ALL = False
-# CORS_ORIGIN_WHITELIST = (
-#     'http://localhost:3000',
-# )
 
 # Application definition
 
 INSTALLED_APPS = [
+    # 'sslserver',
     'corsheaders',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -53,8 +56,21 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'users',
-    'rest_framework'
+    'rest_framework',
+    'rest_framework.authtoken'
 ]
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.TokenAuthentication',
+    ),
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated', )
+}
+
+CORS_ORIGIN_WHITELIST = (
+    'http://localhost:3000',
+)
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
@@ -96,10 +112,10 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': os.environ['NAME'],
-        'USER': os.environ['USER'], # '<db_username>',
-        'PASSWORD': os.environ['PASSWORD'], #'<password>',
-        'HOST': os.environ['HOST'], # '<db_hostname_or_ip>',
-        'PORT': os.environ['PORT'], #'<db_port>',
+        'USER': os.environ['USER'],  # '<db_username>',
+        'PASSWORD': os.environ['PASSWORD'],  # '<password>',
+        'HOST': os.environ['HOST'],  # '<db_hostname_or_ip>',
+        'PORT': os.environ['PORT'],  # '<db_port>',
     }
 }
 

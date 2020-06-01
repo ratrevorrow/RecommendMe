@@ -1,62 +1,103 @@
-from django.shortcuts import render
-from django.http import JsonResponse
-from rest_framework import status, serializers
-from rest_framework.parsers import JSONParser
-from rest_framework.decorators import api_view
-from rest_framework.response import Response
-from users.models import User, BeersTasted
-from users.serializers import UserSerializer, BeerTastedSerializer
-from django.core import serializers as ss
-from datetime import datetime
-from django.http import HttpResponse
+"""Views for users module
+
+Returns:
+    Function -- api endpoints
+"""
 import json
-from django.db.models import Count
-from django.core.serializers.json import DjangoJSONEncoder
-import sys
 from operator import itemgetter
 
+# from django.contrib.auth import authenticate, login
+from django.core.serializers.json import DjangoJSONEncoder
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from django.contrib.auth.models import User
+from django.db.models import Sum, Count
+from rest_framework.authtoken.models import Token
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.parsers import JSONParser
+from rest_framework.authentication import TokenAuthentication
+from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.response import Response
+from rest_framework.status import (HTTP_200_OK, HTTP_201_CREATED,
+                                   HTTP_400_BAD_REQUEST, HTTP_404_NOT_FOUND)
+
+from users.models import BeerTasted
+from users.serializers import LoginSerializer, RegisterSerializer
+
+
 # Create your views here.
-
-
-@api_view(['POST'])
+@csrf_exempt
+@api_view(["POST"])
+@permission_classes((AllowAny,))
 def create_user(request):
+    """Create a user
+
+    Returns:
+        JsonResponse -- new user data or error
+    """
+    # user = User.objects.create_user('john', 'lennon@thebeatles.com', 'johnpassword')
     data = JSONParser().parse(request)
-    serializer = UserSerializer(data=data)
+    serializer = RegisterSerializer(data=data)
     if serializer.is_valid():
         serializer.save()
-        return JsonResponse(serializer.data, status=201)
-    return JsonResponse(serializer.errors, status=400)
+        return JsonResponse(serializer.data, status=HTTP_201_CREATED)
+    print(serializer.errors)
+    return JsonResponse(serializer.errors, status=HTTP_400_BAD_REQUEST)
 
 
+@csrf_exempt
+@api_view(["POST"])
+@permission_classes((AllowAny,))
+def auth_login(request):
+    """Login a user
+
+    Returns:
+        Response -- token and user data, or error
+    """
+    data = JSONParser().parse(request)
+    print(f"logging in: {data['username']}")
+    user = LoginSerializer(data=data)
+    if user.is_valid():
+        token, _ = Token.objects.get_or_create(
+            user=User.objects.get(username=user.data['username']))
+        return Response({'token': token.key, 'user': user.data['username']}, status=HTTP_200_OK)
+    else:
+        return Response({'error': 'Invalid Credentials'}, status=HTTP_404_NOT_FOUND)
+
+
+@csrf_exempt
 @api_view(['POST'])
 def add_beer_tasted(request):
+    """Add a beer tasted to the users list
+
+    Returns:
+        Response -- a success message on beer tasted saved, or error
+    """
+    permission_classes = (IsAuthenticated,)
+    authentication_classes = (TokenAuthentication)
     data = JSONParser().parse(request)
-    user = User.objects.get(username=data['username'])
     try:
-        BeersTasted.objects.create(beername=data['beername'], rating=data['rating'],
-                                   style=data['style'], description=data['description'], user=user)
-        return Response(data="Beer entry saved", status=201)
+        BeerTasted.objects.create(beername=data['beername'], rating=data['rating'],
+                                  style=data['style'], description=data['description'], user=request.user)
+        return Response({"response": "Beer entry saved"}, status=HTTP_201_CREATED)
     except:
-        return Response(data="Something unexpected happened", status=400)
-
-    # TODO: serialize BeersTasted similar User
-    # serializer = BeerTastedSerializer(data=data)
-    # if serializer.is_valid():
-    #     serializer.save()
-    #     return JsonResponse(serializer.data, status=201)
-
-    # return JsonResponse(serializer.errors, status=400)
+        return Response({"error": "Unable to save beer tasted"}, status=HTTP_400_BAD_REQUEST)
 
 
+@csrf_exempt
 @api_view(['GET'])
 def get_tasted_beers(request):
-    # TODO: implement cleaner way to retrieve data and return it
-    data = BeersTasted.objects.values(
-        'beername', 'rating', 'created_at', 'style', 'description').order_by('created_at')
-    # print(BeersTasted.objects.values('beername').annotate(the_count=Count('beername')))
+    """Get a list of the beers the user has tasted
+        TODO: implement cleaner way to retrieve data and return it
+    Returns:
+        JsonResponse -- a list of objects that contains beers tasted
+    """
+    permission_classes = (IsAuthenticated,)
+    authentication_classes = (TokenAuthentication)
+    data = BeerTasted.objects.filter(user=request.user).values(
+        'beername', 'rating', 'created_at', 'style', 'description', count=Count('beername')).order_by('created_at')
 
     data = json.loads(json.dumps(list(data), cls=DjangoJSONEncoder))
-    # data = json.loads(ss.serialize('json', data, fields=('beername',))) #BeersTasted.objects.all()))
 
     beers_tasted = []
     preprocess = dict()
@@ -79,18 +120,20 @@ def get_tasted_beers(request):
         })
 
     graphdata.sort(key=itemgetter('count'), reverse=True)
-    
-    returnObject = {
+
+    return_object = {
         'beers': beers_tasted,
         'graphdata': graphdata
     }
 
-    return JsonResponse(returnObject, status=200, safe=False)
+    return JsonResponse({"data": return_object}, status=HTTP_200_OK, safe=False)
 
 
 @api_view(['GET'])
 def recommend_me(request):
+    """Recommend beers to user
 
-    # TODO : ML on saved beers
-
-    return JsonResponse('In progress', status=200, safe=False)
+    Returns:
+        TODO : ML on saved beers
+    """
+    return Response('In progress', status=HTTP_200_OK)

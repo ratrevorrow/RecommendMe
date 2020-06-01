@@ -36,11 +36,15 @@ Using [this](https://www.enterprisedb.com/postgres-tutorials/how-use-postgresql-
 17. Repeat steps 10 and 11.
 18. Google and install pgAdmin. Once running, go to database and ensure users.user table has been created.
 19. `pip install djangorestframework`.
+20. Refer to [this](https://django-oauth-toolkit.readthedocs.io/en/latest/tutorial/tutorial_01.html) for oauth setup.
 
 Run application with step 13: `python manage.py runserver 0.0.0.0:5000`.
+Run it with secure ssl: `python manage.py runsslserver 0.0.0.0:5000`
 
 1. [Deploy app on Heroku tutorial1](https://medium.com/@hdsingh13/deploying-django-app-on-heroku-with-postgres-as-backend-b2f3194e8a43)
 2. [Deploy app on Heroku tutorial2](https://medium.com/@BennettGarner/deploying-django-to-heroku-connecting-heroku-postgres-fcc960d290d1)
 
 Fun facts:
 Wrap up dependencies into a requirements.txt file by running the command: `pip freeze > requirements.txt`.
+
+For exception types for [request-responses](https://docs.djangoproject.com/en/3.0/ref/request-response/#django.http.HttpResponseBadRequest)
