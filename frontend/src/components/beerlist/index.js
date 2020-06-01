@@ -1,13 +1,12 @@
 import React from "react";
-import { client } from "../../util/axios";
 import "./style.css";
-import { Select, Checkbox } from "antd";
+import { Checkbox } from "antd";
 import { Row, Col, Container } from "react-bootstrap";
 import Beers from "./beers";
+import { userActions } from "../../store/actions/user";
+import { connect } from "react-redux";
 
-const { Option } = Select;
-
-export default class Beerlist extends React.Component {
+class Beerlist extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -16,39 +15,17 @@ export default class Beerlist extends React.Component {
             stylesChosen: [],
             onlyNC: false,
             onlyDrafts: false,
-            bottledCount: 0,
-            draftCount: 0,
-            cansCount: 0,
+            bottles: 0,
+            drafts: 0,
+            cans: 0,
         };
-        // this.onSelect = this.onSelect.bind(this);
         this.selectNC = this.selectNC.bind(this);
         this.selectDrafts = this.selectDrafts.bind(this);
     }
 
     componentDidMount() {
-        fetch("http://localhost:5000/beerlist/get_everything")
-            .then((response) => response.json())
-            .then(
-                (data) => {
-                    this.setState({
-                        beerlist: data.beerlist,
-                        draftCount: data.drafts,
-                        bottledCount: data.bottles,
-                        cansCount: data.cans,
-                    });
-                },
-                (errResp) => console.error(errResp)
-            );
-
-        // client.get("beerlist/get_everything").then(response => {
-        //     var data = response.data;
-        // this.setState({
-        //     beerlist: data.beers,
-        //     draftCount: data.drafts,
-        //     bottledCount: data.bottles,
-        //     cansCount: data.cans
-        // });
-        // });
+        const { getAll, alldata } = this.props;
+        getAll();
     }
 
     // onSelect(value) {
@@ -67,79 +44,95 @@ export default class Beerlist extends React.Component {
     render() {
         // TODO : FAVORITES W/ SAVE BUTTON
         // TODO : What are you in the mood for?? Have some key description words W/ SAVE BUTTON
+        const { pending, beerlist, drafts, bottles, cans } = this.props;
         return (
-            <>
-                <div className="ta-center">
-                    <Container fluid>
-                        <Row noGutters>
-                            <Col
-                                style={{
-                                    display: "inline-block",
-                                    padding: 10,
-                                }}
-                            ></Col>
-                            <Col
-                                style={{
-                                    display: "inline-block",
-                                    padding: 10,
-                                }}
-                            >
-                                <Checkbox onChange={this.selectNC}>
-                                    NC Pints only
-                                </Checkbox>
-                            </Col>
-                            <Col
-                                style={{
-                                    display: "inline-block",
-                                    padding: 10,
-                                }}
-                            >
-                                <Checkbox onChange={this.selectDrafts}>
-                                    Drafts only
-                                </Checkbox>
-                            </Col>
+            <div>
+                {pending ? (
+                    <div>loading</div> // TODO: Use spinner
+                ) : (
+                    <>
+                        <div className="ta-center">
+                            <Container fluid>
+                                <Row noGutters>
+                                    <Col
+                                        style={{
+                                            display: "inline-block",
+                                            padding: 10,
+                                        }}
+                                    ></Col>
+                                    <Col
+                                        style={{
+                                            display: "inline-block",
+                                            padding: 10,
+                                        }}
+                                    >
+                                        <Checkbox onChange={this.selectNC}>
+                                            NC Pints only
+                                        </Checkbox>
+                                    </Col>
+                                    <Col
+                                        style={{
+                                            display: "inline-block",
+                                            padding: 10,
+                                        }}
+                                    >
+                                        <Checkbox onChange={this.selectDrafts}>
+                                            Drafts only
+                                        </Checkbox>
+                                    </Col>
 
-                            <br />
+                                    <br />
 
-                            <Col
-                                style={{
-                                    display: "inline-block",
-                                    padding: 10,
-                                }}
-                            >
-                                {this.state.draftCount} Drafts
-                            </Col>
-                            <Col
-                                style={{
-                                    display: "inline-block",
-                                    padding: 10,
-                                }}
-                            >
-                                {this.state.cansCount} Cans
-                            </Col>
-                            <Col
-                                style={{
-                                    display: "inline-block",
-                                    padding: 10,
-                                }}
-                            >
-                                {this.state.bottledCount} Bottles
-                            </Col>
-                            <Col>
-                                {this.state.cansCount +
-                                    this.state.draftCount +
-                                    this.state.bottledCount}{" "}
-                                beers available
-                            </Col>
-                        </Row>
-                    </Container>
-                </div>
-                <div>
-                    {this.state.beerlist && (
-                        <Beers beerlist={this.state.beerlist} />
-                    )}
-                </div>
-            </>
+                                    <Col
+                                        style={{
+                                            display: "inline-block",
+                                            padding: 10,
+                                        }}
+                                    >
+                                        {drafts} Drafts
+                                    </Col>
+                                    <Col
+                                        style={{
+                                            display: "inline-block",
+                                            padding: 10,
+                                        }}
+                                    >
+                                        {cans} Cans
+                                    </Col>
+                                    <Col
+                                        style={{
+                                            display: "inline-block",
+                                            padding: 10,
+                                        }}
+                                    >
+                                        {bottles} Bottles
+                                    </Col>
+                                    <Col>
+                                        {cans + drafts + bottles} beers
+                                        available
+                                    </Col>
+                                </Row>
+                            </Container>
+                        </div>
+                        <div>{beerlist && <Beers beerlist={beerlist} />}</div>
+                    </>
+                )}
+            </div>
         );
     }
 }
+
+function mapState(state) {
+    const { alldata, pending, error } = state.beerlist;
+    if (alldata) {
+        const { beerlist, bottles, cans, drafts } = alldata;
+        return { beerlist, bottles, cans, drafts, pending, error };
+    }
+    return { pending, error };
+}
+
+const actionCreators = {
+    getAll: userActions.getAll,
+};
+
+export default connect(mapState, actionCreators)(Beerlist);

@@ -3,7 +3,10 @@ import { Card, Button, Modal, List, Rate, Divider, message } from "antd";
 import bottle from "../../resources/bottle.jpeg";
 import pint from "../../resources/pint.jpeg";
 import can from "../../resources/can.jpeg";
-import { requestOptions } from "../../util/axios";
+import { userActions } from "../../store/actions/user";
+import { connect } from "react-redux";
+import { authHeader } from "../../store/helpers/auth-header";
+import { urls } from "../../services/urls";
 
 import "./style.css";
 
@@ -24,10 +27,10 @@ const { Meta } = Card;
  */
 /**
  * TODO: Clean this page up
- * 
- * @param {*} props 
+ *
+ * @param {beer} Beer object that contains the necessary fields/values
  */
-function Beer({beer}) {
+function Beer({ beer }) {
     const [loading, setLoading] = useState(false);
     const [visible, setVisible] = useState(false);
     const [rateVisible, setRateVisible] = useState(false);
@@ -68,26 +71,32 @@ function Beer({beer}) {
     };
 
     const handleOk = () => {
-        setLoading(true);
-        requestOptions.body = JSON.stringify({
+        const obj = {
             beername: beer.name,
-            username: "RichardTrevorrow", // TODO: leave this out. Have the backend verify who the user is. (also setup sign up / login page)
             rating: value,
             style: beer.style,
             description: beer.description,
-        });
-        fetch("http://localhost:5000/users/tasted", requestOptions)
+        };
+        const requestOptions = {
+            method: "POST",
+            headers: {
+                ...authHeader(),
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(obj),
+        };
+
+        fetch(urls.USERS.concat("/tasted"), requestOptions)
             .then((response) => response.json())
             .then(
-                (data) => {
-                    message.success(data, 4);
+                (resp) => {
+                    message.success(resp.response, 4);
                     setLoading(false);
                     setVisible(false);
                     setRateVisible(false);
                 },
-                (errMsg) => {
-                    console.log(errMsg)
-                    message.error(errMsg, 4);
+                (errResp) => {
+                    message.success(errResp.error, 4);
                     setLoading(false);
                     setVisible(false);
                     setRateVisible(false);
@@ -168,7 +177,7 @@ function Beer({beer}) {
                     </Button>,
                 ]}
             >
-                What would you rate this?
+                What would you rate this beer?
                 <Divider />
                 <div>
                     <Rate
