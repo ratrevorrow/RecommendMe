@@ -24,14 +24,9 @@ class Beerlist extends React.Component {
     }
 
     componentDidMount() {
-        const { getAll, alldata } = this.props;
+        const { getAll } = this.props;
         getAll();
     }
-
-    // onSelect(value) {
-    //     console.log(value);
-    //     this.setState({ stylesChosen: value });
-    // }
 
     selectNC() {
         this.setState({ onlyNC: !this.state.onlyNC });
@@ -48,7 +43,7 @@ class Beerlist extends React.Component {
         return (
             <div>
                 {pending ? (
-                    <div>loading</div> // TODO: Use spinner
+                    <div>loading</div> // TODO: https://material-ui.com/components/backdrop/
                 ) : (
                     <>
                         <div className="ta-center">
