@@ -1,14 +1,24 @@
-from django.db import models
-import requests
+"""Initiate all the data to use and return to the client"""
 import re
+import requests
 import spacy
 
 # Create your models here.
 nlp = spacy.load('en_core_web_sm')
 
+
 class Initiators:
-    # def __init__(self):
-    #     initiate_beerlist(self)
+    """Initiate the data to use from FS"""
+
+    def __init__(self):
+        self.breweries = []
+        self.styles = []
+        self.names = []
+        self.beerlist = []
+        self.drafts = []
+        self.bottles = []
+        self.cans = []
+        self.adjectives = []
 
     def initiate_everything(self):
         self.initiate_beerlist()
@@ -27,9 +37,9 @@ class Initiators:
         store_id: "13877"
         style: "American Stout"
     """
+
     def initiate_beerlist(self):
         print("Initiating beerlist")
-        beerlist = []
 
         breweries = []
         names = []
@@ -71,12 +81,13 @@ class Initiators:
             if obj['city']:
                 if "NC" in obj['city']:
                     obj['isNC'] = True
-                else: 
+                else:
                     obj['isNC'] = False
             else:
                 obj['isNC'] = False
 
-            obj['description'] = obj['description'].replace('<p>', '').replace('</p>', '')
+            obj['description'] = obj['description'].replace(
+                '<p>', '').replace('</p>', '')
         # set unique types
         self.breweries = list(dict.fromkeys(breweries))
         self.styles = list(dict.fromkeys(styles))
@@ -87,7 +98,8 @@ class Initiators:
         self.cans = cans
 
     def initiate_adjectives(self):
-        self.adjectives = []
+        """Extract adjectives from beerlist obtained from FS"""
+
         for obj in self.beerlist:
             doc = nlp(obj['description'])
             for i, token in enumerate(doc):
@@ -115,14 +127,12 @@ class Initiators:
     def get_everything(self):
         return {
             "breweries": self.breweries,
-            "styles": self.styles, 
-            "names": self.names, 
+            "styles": self.styles,
+            "names": self.names,
             "beerlist": self.beerlist,
             "drafts": self.drafts,
             "bottles": self.bottles,
             "cans": self.cans,
             "adjectives": self.adjectives
         }
-
-
 
