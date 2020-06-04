@@ -40,9 +40,9 @@ def create_user(request):
     serializer = RegisterSerializer(data=data)
     if serializer.is_valid():
         serializer.save()
-        return JsonResponse(serializer.data, status=HTTP_201_CREATED)
+        return Response(data=f"Successfully registered {data['username']}", status=HTTP_201_CREATED)
     print(serializer.errors)
-    return JsonResponse(serializer.errors, status=HTTP_400_BAD_REQUEST)
+    return JsonResponse(data=serializer.errors, status=HTTP_400_BAD_REQUEST)
 
 
 @csrf_exempt

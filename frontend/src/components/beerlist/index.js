@@ -5,6 +5,7 @@ import { Row, Col, Container } from "react-bootstrap";
 import Beers from "./beers";
 import { userActions } from "../../store/actions/user";
 import { connect } from "react-redux";
+import { Paper } from "@material-ui/core";
 
 class Beerlist extends React.Component {
     constructor(props) {
@@ -47,67 +48,74 @@ class Beerlist extends React.Component {
                 ) : (
                     <>
                         <div className="ta-center">
-                            <Container fluid>
-                                <Row noGutters>
-                                    <Col
-                                        style={{
-                                            display: "inline-block",
-                                            padding: 10,
-                                        }}
-                                    ></Col>
-                                    <Col
-                                        style={{
-                                            display: "inline-block",
-                                            padding: 10,
-                                        }}
-                                    >
-                                        <Checkbox onChange={this.selectNC}>
-                                            NC Pints only
-                                        </Checkbox>
-                                    </Col>
-                                    <Col
-                                        style={{
-                                            display: "inline-block",
-                                            padding: 10,
-                                        }}
-                                    >
-                                        <Checkbox onChange={this.selectDrafts}>
-                                            Drafts only
-                                        </Checkbox>
-                                    </Col>
+                            <Paper
+                                elevation={7}
+                                style={{ display: "block", width: "100%" }}
+                            >
+                                <Container fluid>
+                                    <Row noGutters>
+                                        <Col
+                                            style={{
+                                                display: "inline-block",
+                                                padding: 10,
+                                            }}
+                                        ></Col>
+                                        <Col
+                                            style={{
+                                                display: "inline-block",
+                                                padding: 10,
+                                            }}
+                                        >
+                                            <Checkbox onChange={this.selectNC}>
+                                                NC Pints only
+                                            </Checkbox>
+                                        </Col>
+                                        <Col
+                                            style={{
+                                                display: "inline-block",
+                                                padding: 10,
+                                            }}
+                                        >
+                                            <Checkbox
+                                                onChange={this.selectDrafts}
+                                            >
+                                                Drafts only
+                                            </Checkbox>
+                                        </Col>
 
-                                    <br />
+                                        <br />
 
-                                    <Col
-                                        style={{
-                                            display: "inline-block",
-                                            padding: 10,
-                                        }}
-                                    >
-                                        {drafts} Drafts
-                                    </Col>
-                                    <Col
-                                        style={{
-                                            display: "inline-block",
-                                            padding: 10,
-                                        }}
-                                    >
-                                        {cans} Cans
-                                    </Col>
-                                    <Col
-                                        style={{
-                                            display: "inline-block",
-                                            padding: 10,
-                                        }}
-                                    >
-                                        {bottles} Bottles
-                                    </Col>
-                                    <Col>
-                                        {cans + drafts + bottles} beers
-                                        available
-                                    </Col>
-                                </Row>
-                            </Container>
+                                        <Col
+                                            style={{
+                                                display: "inline-block",
+                                                padding: 10,
+                                            }}
+                                        >
+                                            {drafts} Drafts
+                                        </Col>
+                                        <Col
+                                            style={{
+                                                display: "inline-block",
+                                                padding: 10,
+                                            }}
+                                        >
+                                            {cans} Cans
+                                        </Col>
+                                        <Col
+                                            style={{
+                                                display: "inline-block",
+                                                padding: 10,
+                                            }}
+                                        >
+                                            {bottles} Bottles
+                                        </Col>
+                                        <Col>
+                                            {cans + drafts + bottles} beers
+                                            available
+                                        </Col>
+                                    </Row>
+                                </Container>
+                            </Paper>
                         </div>
                         <div>{beerlist && <Beers beerlist={beerlist} />}</div>
                     </>

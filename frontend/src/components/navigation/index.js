@@ -7,6 +7,7 @@ import BeersTasted from "../tasted/index";
 import Login from "../login/index";
 const { Header } = Layout;
 
+// TODO: implement dark mode option
 export default class Navbar extends React.Component {
     state = {
         current: "welcome",

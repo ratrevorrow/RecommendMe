@@ -1,117 +1,154 @@
-import React, { useState } from "react";
-import { Button, Form, Input, Checkbox } from "antd";
+import React from "react";
+import { Form, Input, Checkbox, message } from "antd";
 import "./style.css";
 import { userActions } from "../../store/actions/user";
 import { connect } from "react-redux";
+import { Button, Color } from "@material-ui/core";
+import { LockOpen, AccessibilityNew } from "@material-ui/icons";
 
 /**
  * Todo: separate this into registration and login forms
  */
-function LoginForm(props) {
-    const [isRegisterClicked, setIsRegisterClicked] = useState(false);
+class LoginForm extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            isRegisterClicked: false,
+        };
+        this.onFinish = this.onFinish.bind(this);
+    }
 
-    const onFinish = (values) => {
-        console.log(`registering/logging in`);
-        isRegisterClicked ? props.register(values) : props.login(values);
+    componentDidUpdate = () => {
+        // TODO: refactor
+        const { success, error } = this.props;
+        if (success) message.success(success, 4);
+        if (error) message.error(error, 4);
     };
 
-    return (
-        <Form
-            name="normal_login"
-            className="login-form"
-            initialValues={{
-                remember: false,
-                username: "randomuser1",
-                email: "testing@gmail.com",
-                password: "testing1234",
-            }}
-            onFinish={onFinish}
-        >
-            <Form.Item
-                name="username"
-                rules={[
-                    {
-                        required: true,
-                        message: "Please input your username",
-                    },
-                ]}
+    onFinish = (values) => {
+        console.log(
+            this.state.isRegisterClicked ? `registering` : `logging in`
+        );
+        this.state.isRegisterClicked
+            ? this.props.register(values)
+            : this.props.login(values);
+    };
+
+    render() {
+        // const { pending } = this.props;
+
+        return (
+            <Form
+                name="normal_login"
+                className="login-form"
+                initialValues={{
+                    remember: false,
+                    username: "randomuser1",
+                    email: "testing@gmail.com",
+                    password: "testing1234",
+                }}
+                onFinish={this.onFinish}
             >
-                <Input
-                    // prefix={
-                    //     <UserOutlined className="site-form-item-icon" />
-                    // }
-                    placeholder="Username"
-                />
-            </Form.Item>
-            {isRegisterClicked ? (
                 <Form.Item
-                    name="email"
-                    // label="Email"
+                    name="username"
                     rules={[
                         {
                             required: true,
-                            message: "Please input your email address",
-                            type: "email",
+                            message: "Please input your username",
                         },
                     ]}
                 >
-                    <Input type="email" placeholder="Email" />
+                    <Input
+                        // prefix={
+                        //     <UserOutlined className="site-form-item-icon" />
+                        // }
+                        placeholder="Username"
+                    />
                 </Form.Item>
-            ) : (
-                <></>
-            )}
-            <Form.Item
-                name="password"
-                rules={[
-                    {
-                        required: true,
-                        message: "Please input your password",
-                    },
-                ]}
-            >
-                <Input
-                    // prefix={
-                    //     <LockOutlined className="site-form-item-icon" />
-                    // }
-                    type="password"
-                    placeholder="Password"
-                />
-            </Form.Item>
-            {isRegisterClicked ? (
-                <></>
-            ) : (
-                <Form.Item>
-                    <Form.Item name="remember" valuePropName="checked" noStyle>
-                        <Checkbox>Remember me</Checkbox>
+                {this.state.isRegisterClicked ? (
+                    <Form.Item
+                        name="email"
+                        // label="Email"
+                        rules={[
+                            {
+                                required: true,
+                                message: "Please input your email address",
+                                type: "email",
+                            },
+                        ]}
+                    >
+                        <Input type="email" placeholder="Email" />
                     </Form.Item>
+                ) : (
+                    <></>
+                )}
+                <Form.Item
+                    name="password"
+                    rules={[
+                        {
+                            required: true,
+                            message: "Please input your password",
+                        },
+                    ]}
+                >
+                    <Input
+                        // prefix={
+                        //     <LockOutlined className="site-form-item-icon" />
+                        // }
+                        type="password"
+                        placeholder="Password"
+                    />
+                </Form.Item>
+                {this.state.isRegisterClicked ? (
+                    <></>
+                ) : (
+                    // TODO
+                    <Form.Item>
+                        <Form.Item
+                            name="remember"
+                            valuePropName="checked"
+                            noStyle
+                        >
+                            <Checkbox>Remember me</Checkbox>
+                        </Form.Item>
 
-                    <a className="login-form-forgot" href="">
-                        Forgot password
+                        <a className="login-form-forgot" href="">
+                            Forgot password
+                        </a>
+                    </Form.Item>
+                )}
+                <Form.Item>
+                    <Button
+                        type="submit"
+                        variant="contained"
+                        color={"primary"}
+                        endIcon={this.state.isRegisterClicked ? <AccessibilityNew /> : <LockOpen />}
+                        className="login-form-button"
+                    >
+                        {this.state.isRegisterClicked ? "Register" : "Log in"}
+                    </Button>
+                    Or{" "}
+                    <a
+                        onClick={() =>
+                            this.setState({
+                                isRegisterClicked: !this.state
+                                    .isRegisterClicked,
+                            })
+                        }
+                    >
+                        {this.state.isRegisterClicked
+                            ? "Log in"
+                            : "Register now!"}
                     </a>
                 </Form.Item>
-            )}
-            <Form.Item>
-                <Button
-                    type="primary"
-                    htmlType="submit"
-                    className="login-form-button"
-                    loading={props.registering}
-                    // style={{backgroundColor: 'red', borderColor: 'red'}}
-                >
-                    {isRegisterClicked ? "Register" : "Log in"}
-                </Button>
-                Or{" "}
-                <a onClick={() => setIsRegisterClicked(!isRegisterClicked)}>
-                    {isRegisterClicked ? "Log in" : "Register now!"}
-                </a>
-            </Form.Item>
-        </Form>
-    );
+            </Form>
+        );
+    }
 }
 
 function mapState(state) {
-    const { registering } = state.registration;
-    return { registering };
+    const { pending, success, error } = state.registration;
+    return { pending, success, error };
 }
 
 const actionCreators = {

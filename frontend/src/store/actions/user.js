@@ -36,13 +36,17 @@ function register(user) {
 
         userService.register(user)
             .then(
-                user => dispatch(success(user)),
-                error => dispatch(failure(error))
+                registered => dispatch(success(registered)),
+                error =>  {
+                    console.log(`errorrrr`)
+                    console.log(error)
+                    dispatch(failure(error))
+                }
             );
     };
 
-    function request(user) { return { type: userConstants.REGISTER_REQUEST, user } }
-    function success(user) { return { type: userConstants.REGISTER_SUCCESS, user } }
+    function request() { return { type: userConstants.REGISTER_REQUEST } }
+    function success(registered) { return { type: userConstants.REGISTER_SUCCESS, registered } }
     function failure(error) { return { type: userConstants.REGISTER_FAILURE, error } }
 }
 

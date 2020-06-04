@@ -1,16 +1,15 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Card, Button, Modal, List, Rate, Divider, message } from "antd";
 import bottle from "../../resources/bottle.jpeg";
 import pint from "../../resources/pint.jpeg";
 import can from "../../resources/can.jpeg";
-import { userActions } from "../../store/actions/user";
-import { connect } from "react-redux";
+// import { userActions } from "../../store/actions/user";
+// import { connect } from "react-redux";
 import { authHeader } from "../../store/helpers/auth-header";
 import { urls } from "../../services/urls";
+import { Paper } from "@material-ui/core";
 
 import "./style.css";
-
-const { Meta } = Card;
 
 /**
  *  brew_id: "17368796"
@@ -110,91 +109,93 @@ function Beer({ beer }) {
     };
 
     return (
-        <List.Item
-            actions={[
-                <a onClick={showRatingModal}>Check in</a>,
-                <a onClick={showModal}>Description</a>,
-            ]}
-        >
-            <List.Item.Meta
-                avatar={
-                    <img
-                        src={
-                            beer.container == "draught"
-                                ? pint
-                                : beer.container == "can"
-                                ? can
-                                : bottle
-                        }
-                        alt="bottle"
-                        style={{
-                            height: 60,
-                            width: 60,
-                            textAlign: "center",
-                        }}
-                    />
-                }
-                title={beer.brewer + " " + beer.percentage}
-                description={beer.name}
-            />
-            <Modal
-                visible={visible}
-                title={beer.name}
-                onOk={handleOk}
-                onCancel={handleCancel}
-                footer={[
-                    <Button key="back" onClick={handleCancel}>
-                        Return
-                    </Button>,
-                    <Button
-                        key="submit"
-                        type="primary"
-                        loading={loading}
-                        onClick={handleOk}
-                    >
-                        Check in
-                    </Button>,
+        <Paper elevation={7} style={{ display: "block", width: "100%" }}>
+            <List.Item
+                actions={[
+                    <a onClick={showRatingModal}>Check in</a>,
+                    <a onClick={showModal}>Description</a>,
                 ]}
             >
-                {<ModalDescription />}
-            </Modal>
-            <Modal
-                visible={rateVisible}
-                title={beer.name}
-                onOk={handleOk}
-                onCancel={handleCancel}
-                footer={[
-                    <Button key="back" onClick={handleCancel}>
-                        Return
-                    </Button>,
-                    <Button
-                        key="submit"
-                        type="primary"
-                        loading={loading}
-                        onClick={handleOk}
-                    >
-                        Submit
-                    </Button>,
-                ]}
-            >
-                What would you rate this beer?
-                <Divider />
-                <div>
-                    <Rate
-                        tooltips={desc}
-                        onChange={handleValue}
-                        value={value}
-                        allowHalf
-                    />
-                </div>
-            </Modal>
-            <Rate
-                character="$"
-                disabled
-                style={{ fontSize: 36 }}
-                defaultValue={beer.dcount || 1}
-            />
-        </List.Item>
+                <List.Item.Meta
+                    avatar={
+                        <img
+                            src={
+                                beer.container == "draught"
+                                    ? pint
+                                    : beer.container == "can"
+                                    ? can
+                                    : bottle
+                            }
+                            alt="bottle"
+                            style={{
+                                height: 60,
+                                width: 60,
+                                textAlign: "center",
+                            }}
+                        />
+                    }
+                    title={beer.brewer + " " + beer.percentage}
+                    description={beer.name}
+                />
+                <Modal
+                    visible={visible}
+                    title={beer.name}
+                    onOk={handleOk}
+                    onCancel={handleCancel}
+                    footer={[
+                        <Button key="back" onClick={handleCancel}>
+                            Return
+                        </Button>,
+                        <Button
+                            key="submit"
+                            type="primary"
+                            loading={loading}
+                            onClick={handleOk}
+                        >
+                            Check in
+                        </Button>,
+                    ]}
+                >
+                    {<ModalDescription />}
+                </Modal>
+                <Modal
+                    visible={rateVisible}
+                    title={beer.name}
+                    onOk={handleOk}
+                    onCancel={handleCancel}
+                    footer={[
+                        <Button key="back" onClick={handleCancel}>
+                            Return
+                        </Button>,
+                        <Button
+                            key="submit"
+                            type="primary"
+                            loading={loading}
+                            onClick={handleOk}
+                        >
+                            Submit
+                        </Button>,
+                    ]}
+                >
+                    What would you rate this beer?
+                    <Divider />
+                    <div>
+                        <Rate
+                            tooltips={desc}
+                            onChange={handleValue}
+                            value={value}
+                            allowHalf
+                        />
+                    </div>
+                </Modal>
+                <Rate
+                    character="$"
+                    disabled
+                    style={{ fontSize: 36 }}
+                    defaultValue={beer.dcount || 1}
+                />
+            </List.Item>
+        </Paper>
     );
 }
 

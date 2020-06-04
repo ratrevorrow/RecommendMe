@@ -1,6 +1,6 @@
 import React from "react";
 import { List } from "antd";
-import Beer from './beer';
+import Beer from "./beer";
 
 import "./style.css";
 
@@ -23,9 +23,7 @@ export default class Beers extends React.Component {
                     <List
                         itemLayout="horizontal"
                         dataSource={this.state.beerlist}
-                        renderItem={(beer) => (
-                            <Beer beer={beer}/>
-                        )}
+                        renderItem={(beer) => <Beer beer={beer} />}
                     />
                 </>
             )

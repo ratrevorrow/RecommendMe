@@ -6,7 +6,6 @@ import spacy
 # Create your models here.
 nlp = spacy.load('en_core_web_sm')
 
-
 class Initiators:
     """Initiate the data to use from FS"""
 

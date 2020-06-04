@@ -48,30 +48,8 @@ class BeersTasted extends React.Component {
 
     componentDidMount() {
         this.props.getTastedBeers();
-        // fetch("http://localhost:5000/users/get_tasted_beers")
-        //     .then((response) => response.json())
-        //     .then(
-        //         (data) => {
-        //             console.log(data)
-        // data.beers.forEach(
-        //     (beer, idx) =>
-        //         (beer.rating = (
-        //             <Rate
-        //                 disabled
-        //                 allowHalf
-        //                 defaultValue={parseFloat(beer.rating)}
-        //                 key={idx}
-        //             />
-        //         ))
-        // );
-        //             // this.setState({
-        //             //     beers: data.beers,
-        //             //     graphdata: data.graphdata,
-        //             // });
-        //         },
-        //         (errResp) => console.error(errResp)
-        //     );
     }
+    
     render() {
         let beersTasted = null;
         let graphs = null;

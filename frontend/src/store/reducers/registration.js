@@ -1,18 +1,19 @@
 import { userConstants } from "../constants/constants";
 
 const initialState = {
-    registering: false,
+    pending: false,
     error: null,
+    success: null,
 };
 
 export function registration(state = initialState, action) {
     switch (action.type) {
         case userConstants.REGISTER_REQUEST:
-            return { registering: true, error: null };
+            return { pending: true, success: null, error: null };
         case userConstants.REGISTER_SUCCESS:
-            return { registering: false, error: null };
+            return { pending: false, success: action.registered, error: null };
         case userConstants.REGISTER_FAILURE:
-            return { registering: false, error: action.error };
+            return { pending: false, success: null, error: action.error };
         default:
             return state;
     }

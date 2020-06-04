@@ -5,37 +5,41 @@ const initialState = user
     ? {
           pending: false,
           user,
-          loggedIn: true,
+          success: true,
+          error: null
       }
-    : { pending: false, user: null, loggedIn: false };
+    : { pending: false, user: null, success: false, error: null };
 
 export function authentication(state = initialState, action) {
     switch (action.type) {
         case userConstants.LOGIN_REQUEST:
             return {
+                error: false,
+                success: false,
                 user: null,
-                loggingIn: false,
                 pending: true
             };
         case userConstants.LOGIN_SUCCESS:
             return {
                 error: false,
-                loggedIn: true,
+                success: true,
                 user: action.user,
+                pending: false
             };
         case userConstants.LOGIN_FAILURE:
             return {
                 error: action.error,
-                loggedIn: false,
+                success: false,
                 user: null,
+                pending: false
             }
         case userConstants.LOGOUT:
             return {
                 ...state,
-                loggedIn: false,
+                success: true,
                 user: null,
             }
         default:
-            return state;
+            return initialState;
     }
 }

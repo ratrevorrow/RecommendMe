@@ -1,70 +1,34 @@
 import React from "react";
-import { client } from "../../util/axios";
-import { Select } from "antd";
-import PreferredForm from "./form";
+// import PreferredForm from "./form";
+import { connect } from "react-redux";
+import QueueAnim from "rc-queue-anim";
 
-const { Option } = Select;
-
-export default class Welcome extends React.Component {
+class Welcome extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {
-            adjectives: null,
-            words: null,
-            loading: false,
-            beerlist: null,
-        };
-        this.onSelect = this.onSelect.bind(this);
-        this.onSubmit = this.onSubmit.bind(this);
+        this.state = {};
     }
 
-    componentDidMount() {
-        this.setState({ loading: true });
-        // client
-        //     .get("initiate_adjectives")
-        //     .then((res) =>
-        //         this.setState({ adjectives: res.data, loading: false })
-        //     );
-    }
-
-    onSelect(words) {
-        this.setState({ words: words });
-    }
-
-    onSubmit() {
-        const adj = this.state.words;
-        this.setState({ beerlist: null });
-        client
-            .post("get_beers_from_adjs", { adjectives: adj })
-            .then((res) => this.setState({ beerlist: res.data }));
-    }
+    componentDidMount() {}
 
     render() {
         return (
             <>
-                {/* <Select
-                    mode="multiple"
-                    style={{ width: 250 }}
-                    placeholder="Choose Adjective"
-                    // defaultValue={["a10", "c12"]}
-                    // onSelect={this.onSelect}
-                    onChange={this.onSelect}
-                    loading={this.state.loading}
-                >
-                    {this.state.adjectives &&
-                        this.state.adjectives.map((adjective, i) => (
-                            <Option value={adjective} key={i}>
-                                {adjective}
-                            </Option>
-                        ))}
-                </Select>
-                <Button onClick={this.onSubmit}>Submit</Button>
-                <Divider /> */}
-                <PreferredForm/>
-                {/* {this.state.beerlist && (
-                    <Beers beerlist={this.state.beerlist} />
-                )} */}
+                {/* <PreferredForm /> */}
+                <QueueAnim delay={300} className="queue-simple">
+                    <div key="a">Recommended beers</div>
+                    <div key="b">Recommended beers</div>
+                    <div key="c">Recommended beers</div>
+                    <div key="d">Recommended beers</div>
+                </QueueAnim>
             </>
         );
     }
 }
+
+function mapState(state) {
+    const { pending, success, error, user } = state.authentication;
+    return { pending, success, error, user };
+}
+
+export default connect(mapState)(Welcome);
