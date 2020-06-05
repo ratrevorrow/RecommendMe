@@ -8,9 +8,9 @@ import Texty from "rc-texty";
 class Login extends React.Component {
     constructor(props) {
         super(props);
-
+        const { user } = this.props;
         this.state = {
-            loginDisplay: "Login",
+            loginDisplay: user ? user : "Login",
         };
         this.wrapTexty = this.wrapTexty.bind(this);
     }
@@ -37,7 +37,7 @@ class Login extends React.Component {
                             })
                         }
                     >
-                        {this.wrapTexty(user ? user : "Login")}
+                        {this.state.loginDisplay}
                     </Button>
                 </Popover>
             </>

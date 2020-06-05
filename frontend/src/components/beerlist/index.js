@@ -82,9 +82,8 @@ class Beerlist extends React.Component {
                                                 Drafts only
                                             </Checkbox>
                                         </Col>
-
-                                        <br />
-
+                                    </Row>
+                                    <Row>
                                         <Col
                                             style={{
                                                 display: "inline-block",
@@ -109,6 +108,8 @@ class Beerlist extends React.Component {
                                         >
                                             {bottles} Bottles
                                         </Col>
+                                    </Row>
+                                    <Row>
                                         <Col>
                                             {cans + drafts + bottles} beers
                                             available
