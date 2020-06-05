@@ -1,21 +1,33 @@
 import React from "react";
-import { Popover, Button } from "antd";
+import { Popover } from "antd";
 import LoginForm from "./loginform";
 import { connect } from "react-redux";
-import Texty from "rc-texty";
-// const {  UserOutlined, LockOutlined  } = icons;
+import { Button, ButtonGroup } from "@material-ui/core";
+import { AccountCircle, LockOpen } from "@material-ui/icons";
+import { userActions } from "../../store/actions/user";
 
 class Login extends React.Component {
     constructor(props) {
         super(props);
-        const { user } = this.props;
-        this.state = {
-            loginDisplay: user ? user : "Login",
-        };
-        this.wrapTexty = this.wrapTexty.bind(this);
+        this.Logout = this.Logout.bind(this);
     }
 
-    wrapTexty = txt => <Texty type="left" mode="smooth">{txt}</Texty>;
+    Logout() {
+        return (
+            <ButtonGroup
+                orientation="vertical"
+                color="primary"
+                aria-label="vertical outlined primary button group"
+            >
+                <Button
+                    variant="contained"
+                    onClick={() => this.props.logout()}
+                >
+                    Logout
+                </Button>
+            </ButtonGroup>
+        );
+    }
 
     render() {
         const { user } = this.props;
@@ -23,21 +35,16 @@ class Login extends React.Component {
             <>
                 <Popover
                     placement="leftTop"
-                    content={<LoginForm />}
+                    content={user ? <this.Logout /> : <LoginForm />}
                     title=""
                     trigger="click"
                 >
                     <Button
-                        onMouseEnter={() =>
-                            this.setState({ loginDisplay: this.wrapTexty("Logout") })
-                        }
-                        onMouseLeave={() =>
-                            this.setState({
-                                loginDisplay: this.wrapTexty(user ? user : "Login"),
-                            })
-                        }
+                        variant="contained"
+                        color="primary"
+                        endIcon={!user && <LockOpen />}
                     >
-                        {this.state.loginDisplay}
+                        {user ? <AccountCircle /> : "Login"}
                     </Button>
                 </Popover>
             </>
@@ -50,8 +57,8 @@ function mapState(state) {
     return { pending, success, error, user };
 }
 
-// const actionCreators = {
-//     login: userActions.login,
-// };
+const actionCreators = {
+    logout: userActions.logout,
+};
 
-export default connect(mapState)(Login);
+export default connect(mapState, actionCreators)(Login);

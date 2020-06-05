@@ -1,6 +1,10 @@
+import random
 from django.http import JsonResponse
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
+from rest_framework.status import HTTP_200_OK
+from rest_framework.response import Response
+from rest_framework.parsers import JSONParser
 from beerlist.models import Initiators
 
 initiators = Initiators()
@@ -13,16 +17,36 @@ def get_everything(request):
     """Get all the data
 
     Returns:
-        JsonResponse -- beers object containing the formatted beerlist with adjectives
+        Response -- beers object containing the formatted beerlist with adjectives
     """
-    return JsonResponse({"beers": initiators.get_everything()}, status=200)
+    return Response({"beers": initiators.get_everything()})
+
 
 @api_view(['GET'])
 @permission_classes((AllowAny,))
 def get_styles(request):
-    """Login a user
+    """Get the list of styles of beers
 
     Returns:
-        Response -- token and user data, or error
+        Response -- the list of styles to choose from
     """
-    return JsonResponse(initiators.get_styles(), status=200, safe=False)
+    return Response(initiators.get_styles(), status=HTTP_200_OK)
+
+
+@api_view(['POST'])
+@permission_classes((AllowAny,))
+def get_three_random_beers(request):
+    """Get three random beers from the beerlist
+
+    Returns:
+        Response -- 3 random beers
+    """
+    data = JSONParser().parse(request)
+    beerlist = initiators.get_beerlist()
+    include_only = data['includeOnly']
+    # if the length is 4, then it's the entire beerlist; no point searching
+    if len(include_only) > 0 and len(include_only) != 4:
+        beerlist = [beer for beer in beerlist if beer['container'] in include_only]
+    if data['isNC']:
+        beerlist = [beer for beer in beerlist if beer['isNC']]
+    return Response(random.sample(beerlist, 3), status=HTTP_200_OK)

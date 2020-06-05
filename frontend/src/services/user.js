@@ -7,7 +7,8 @@ export const userService = {
     register,
     getAll,
     update,
-    getTastedBeers
+    getTastedBeers,
+    handleResponse
 };
 
 function login(values) {
@@ -30,6 +31,7 @@ function login(values) {
 function logout() {
     // remove user from local storage to log user out
     localStorage.removeItem("user");
+    localStorage.removeItem("token");
 }
 
 function getAll() {
@@ -74,14 +76,16 @@ function getTastedBeers() {
         method: "GET",
         headers: {
             ...authHeader(),
-            "Content-Type": "application/json"
-        }
+            "Content-Type": "application/json",
+        },
     };
 
-    return fetch(urls.USERS.concat("/get_tasted_beers"), requestOptions).then(handleResponse).then(resp => {
-        console.log(resp)
-        return resp.data;
-    });
+    return fetch(urls.USERS.concat("/get_tasted_beers"), requestOptions)
+        .then(handleResponse)
+        .then((resp) => {
+            console.log(resp);
+            return resp.data;
+        });
 }
 
 function handleResponse(response) {

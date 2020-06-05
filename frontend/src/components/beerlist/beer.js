@@ -1,11 +1,12 @@
 import React, { useState } from "react";
-import { Card, Button, Modal, List, Rate, Divider, message } from "antd";
+import { Button, Modal, List, Rate, Divider, message } from "antd";
 import bottle from "../../resources/bottle.jpeg";
 import pint from "../../resources/pint.jpeg";
 import can from "../../resources/can.jpeg";
 // import { userActions } from "../../store/actions/user";
 // import { connect } from "react-redux";
 import { authHeader } from "../../store/helpers/auth-header";
+import { userService } from "../../services/user";
 import { urls } from "../../services/urls";
 import { Paper } from "@material-ui/core";
 
@@ -86,7 +87,7 @@ function Beer({ beer }) {
         };
 
         fetch(urls.USERS.concat("/tasted"), requestOptions)
-            .then((response) => response.json())
+            .then(userService.handleResponse)
             .then(
                 (resp) => {
                     message.success(resp.response, 4);
@@ -95,7 +96,7 @@ function Beer({ beer }) {
                     setRateVisible(false);
                 },
                 (errResp) => {
-                    message.success(errResp.error, 4);
+                    message.error(errResp === 'Unauthorized' ? "Create an account first" : errResp, 4);
                     setLoading(false);
                     setVisible(false);
                     setRateVisible(false);
@@ -120,9 +121,9 @@ function Beer({ beer }) {
                     avatar={
                         <img
                             src={
-                                beer.container == "draught"
+                                beer.container === "draught"
                                     ? pint
-                                    : beer.container == "can"
+                                    : beer.container === "can"
                                     ? can
                                     : bottle
                             }
@@ -134,7 +135,11 @@ function Beer({ beer }) {
                             }}
                         />
                     }
-                    title={beer.brewer + " " + beer.percentage}
+                    title={
+                        (beer.brewer !== "unassigned" && beer.brewer !== "n/a")
+                            ? [beer.brewer, beer.percentage].join(" ")
+                            : "Specialty"
+                    }
                     description={beer.name}
                 />
                 <Modal

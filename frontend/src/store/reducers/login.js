@@ -1,14 +1,12 @@
 import { userConstants } from "../constants/constants";
 
-let user = JSON.parse(localStorage.getItem("user"));
-const initialState = user
-    ? {
-          pending: false,
-          user,
-          success: true,
-          error: null
-      }
-    : { pending: false, user: null, success: false, error: null };
+// let user = JSON.parse(localStorage.getItem("user"));
+const initialState = {
+    pending: false,
+    user: null,
+    success: false,
+    error: null,
+};
 
 export function authentication(state = initialState, action) {
     switch (action.type) {
@@ -17,29 +15,25 @@ export function authentication(state = initialState, action) {
                 error: false,
                 success: false,
                 user: null,
-                pending: true
+                pending: true,
             };
         case userConstants.LOGIN_SUCCESS:
             return {
                 error: false,
                 success: true,
                 user: action.user,
-                pending: false
+                pending: false,
             };
         case userConstants.LOGIN_FAILURE:
             return {
                 error: action.error,
                 success: false,
                 user: null,
-                pending: false
-            }
+                pending: false,
+            };
         case userConstants.LOGOUT:
-            return {
-                ...state,
-                success: true,
-                user: null,
-            }
-        default:
             return initialState;
+        default:
+            return state;
     }
 }

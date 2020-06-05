@@ -52,6 +52,8 @@ class Initiators:
             'http://www.beerknurd.com/api/brew/list/13877')
         objs = beer_objects.json()
         for obj in objs:
+            if "flight" in obj['name'].lower():
+                obj['container'] = 'flight'
             desc = obj['description']
             percentage = re.findall(r'(\d{1,2}(\.\d+)?%)', desc)
 
@@ -70,7 +72,7 @@ class Initiators:
             if "CAN" in obj['name']:
                 obj['container'] = "can"
                 cans += 1
-            elif obj["container"] == "draught":
+            elif obj["container"] == "draught" or obj["container"] == "flight":
                 drafts += 1
             elif obj["container"] == "bottled":
                 bottles += 1

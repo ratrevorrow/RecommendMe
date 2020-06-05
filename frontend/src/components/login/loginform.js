@@ -3,8 +3,8 @@ import { Form, Input, Checkbox, message } from "antd";
 import "./style.css";
 import { userActions } from "../../store/actions/user";
 import { connect } from "react-redux";
-import { Button, Color } from "@material-ui/core";
-import { LockOpen, AccessibilityNew } from "@material-ui/icons";
+import { Button } from "@material-ui/core";
+import { LockOpen, PersonAdd } from "@material-ui/icons";
 
 /**
  * Todo: separate this into registration and login forms
@@ -47,6 +47,7 @@ class LoginForm extends React.Component {
                     email: "testing@gmail.com",
                     password: "testing1234",
                 }}
+                style={{zIndex: 999999}}
                 onFinish={this.onFinish}
             >
                 <Form.Item
@@ -122,7 +123,7 @@ class LoginForm extends React.Component {
                         type="submit"
                         variant="contained"
                         color={"primary"}
-                        endIcon={this.state.isRegisterClicked ? <AccessibilityNew /> : <LockOpen />}
+                        endIcon={this.state.isRegisterClicked ? <PersonAdd /> : <LockOpen />}
                         className="login-form-button"
                     >
                         {this.state.isRegisterClicked ? "Register" : "Log in"}

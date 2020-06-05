@@ -5,9 +5,13 @@ import Welcome from "../welcome/index";
 import Beerlist from "../beerlist/index";
 import BeersTasted from "../tasted/index";
 import Login from "../login/index";
+import red from '@material-ui/core/colors/red';
+
+const primary = red[500]; // #F44336
 const { Header } = Layout;
 
 // TODO: implement dark mode option
+// TODO: Make mobile friendly: https://material-ui.com/components/app-bar/ 
 export default class Navbar extends React.Component {
     state = {
         current: "welcome",
@@ -28,13 +32,13 @@ export default class Navbar extends React.Component {
         return (
             <>
                 <Layout>
-                    <Header className="header">
+                    <Header style={{backgroundColor: 'white'}}>
                         <div className="logo" />
                         <Menu
                             onClick={this.handleClick}
                             selectedKeys={[this.state.current]}
                             mode="horizontal"
-                            theme="dark"
+                            theme="light"
                             style={{ lineHeight: "64px" }}
                         >
                             <Menu.Item key="welcome">
