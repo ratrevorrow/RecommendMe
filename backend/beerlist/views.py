@@ -1,11 +1,14 @@
 import random
+import json
 from django.http import JsonResponse
+from django.core.serializers.json import DjangoJSONEncoder
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
 from rest_framework.status import HTTP_200_OK
 from rest_framework.response import Response
 from rest_framework.parsers import JSONParser
 from beerlist.models import Initiators
+from users.models import BeerTasted
 
 initiators = Initiators()
 initiators.initiate_everything()
@@ -43,6 +46,10 @@ def get_three_random_beers(request):
     """
     data = JSONParser().parse(request)
     beerlist = initiators.get_beerlist()
+    if not request.user.is_anonymous:
+        beers_tasted = json.loads(json.dumps(list(BeerTasted.objects.filter(user=request.user).values('beername')), cls=DjangoJSONEncoder))
+        beerlist = [beer for beer in beerlist if beer['name'] not in [beer['beername'] for beer in beers_tasted]]
+
     include_only = data['includeOnly']
     # if the length is 4, then it's the entire beerlist; no point searching
     if len(include_only) > 0 and len(include_only) != 4:

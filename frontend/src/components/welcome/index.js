@@ -19,6 +19,7 @@ import {
 } from "@material-ui/core";
 import { Refresh } from "@material-ui/icons";
 import Beer from "../beerlist/beer";
+import { authHeader } from "../../store/helpers/auth-header";
 
 // TODO: refactor
 const ITEM_HEIGHT = 48;
@@ -55,7 +56,10 @@ class Welcome extends React.Component {
 
         const requestOptions = {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
+            headers: {
+                "Content-Type": "application/json",
+                ...authHeader(),
+            },
             body: JSON.stringify({
                 includeOnly: this.state.includeOnly,
                 isNC: this.state.isNC,

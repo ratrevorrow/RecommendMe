@@ -1,14 +1,34 @@
 import React from "react";
 import "./style.css";
-import { Checkbox, Spin } from "antd";
+import { Spin, Space } from "antd";
 import { Row, Col, Container } from "react-bootstrap";
 import Beers from "./beers";
 import { userActions } from "../../store/actions/user";
 import { connect } from "react-redux";
-import { Paper } from "@material-ui/core";
 import { LoadingOutlined } from "@ant-design/icons";
+import {
+    AppBar,
+    Toolbar,
+    Switch,
+    FormGroup,
+    FormControlLabel,
+    Select,
+    Input,
+    MenuItem,
+} from "@material-ui/core";
 
 const antIcon = <LoadingOutlined style={{ fontSize: 24 }} spin />;
+
+const ITEM_HEIGHT = 48;
+const ITEM_PADDING_TOP = 8;
+const MenuProps = {
+    PaperProps: {
+        style: {
+            maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+            width: 250,
+        },
+    },
+};
 
 /**
  * Todo: Scroll to top button
@@ -17,17 +37,15 @@ class Beerlist extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            beerlist: null,
-            styles: null,
-            stylesChosen: [],
-            onlyNC: false,
-            onlyDrafts: false,
+            beerlist: this.props.beerlist,
+            isNC: false,
             bottles: 0,
             drafts: 0,
             cans: 0,
+            includeOnly: [],
         };
-        this.selectNC = this.selectNC.bind(this);
-        this.selectDrafts = this.selectDrafts.bind(this);
+        this.onNCChange = this.onNCChange.bind(this);
+        this.onContainerChange = this.onContainerChange.bind(this);
     }
 
     componentDidMount() {
@@ -35,112 +53,192 @@ class Beerlist extends React.Component {
         getAll();
     }
 
-    selectNC() {
-        this.setState({ onlyNC: !this.state.onlyNC });
+    onNCChange() {
+        this.setState({
+            isNC: !this.state.isNC,
+        });
+        const { beerlist } = this.props;
+        if (this.state.isNC) {
+            this.setState({ beerlist: beerlist.filter((beer) => beer.isNC) });
+        }
     }
 
-    selectDrafts() {
-        this.setState({ onlyDrafts: !this.state.onlyDrafts });
+    onContainerChange(e) {
+        const includeOnly = e.target.value;
+        const { beerlist } = this.props;
+        if (includeOnly.length > 0) {
+            this.setState({
+                beerlist: beerlist.filter((beer) =>
+                    this.state.includeOnly.includes(beer.container)
+                ),
+            });
+        }
     }
 
     render() {
         // TODO : FAVORITES W/ SAVE BUTTON
         // TODO : What are you in the mood for?? Have some key description words W/ SAVE BUTTON
-        const { beerlist, drafts, bottles, cans } = this.props;
+        const { drafts, bottles, cans } = this.props;
         const total = cans + drafts + bottles;
         const spin = <Spin indicator={antIcon} />;
         return (
             <div>
                 <>
                     <div className="ta-center">
-                        <Paper
-                            elevation={7}
-                            style={{
-                                display: "block",
-                                width: "100%",
-                                paddingBottom: 15,
-                            }}
+                        <AppBar
+                            position="relative"
+                            color="default"
+                            style={{ zIndex: 50 }}
                         >
-                            <Container fluid>
-                                <Row noGutters>
-                                    <Col
-                                        style={{
-                                            display: "inline-block",
-                                            padding: 10,
-                                        }}
-                                    ></Col>
-                                    <Col
-                                        style={{
-                                            display: "inline-block",
-                                            padding: 10,
-                                        }}
-                                    >
-                                        <Checkbox onChange={this.selectNC}>
-                                            NC Pints only
-                                        </Checkbox>
-                                    </Col>
-                                    <Col
-                                        style={{
-                                            display: "inline-block",
-                                            padding: 10,
-                                        }}
-                                    >
-                                        <Checkbox onChange={this.selectDrafts}>
-                                            Drafts only
-                                        </Checkbox>
-                                    </Col>
-                                </Row>
-                                <Row>
-                                    <Col
-                                        style={{
-                                            display: "inline-block",
-                                            padding: 10,
-                                        }}
-                                    >
-                                        {!drafts ? spin : drafts} Drafts
-                                    </Col>
-                                    <Col
-                                        style={{
-                                            display: "inline-block",
-                                            padding: 10,
-                                        }}
-                                    >
-                                        {!cans ? spin : cans} Cans
-                                    </Col>
-                                    <Col
-                                        style={{
-                                            display: "inline-block",
-                                            padding: 10,
-                                        }}
-                                    >
-                                        {!bottles ? spin : bottles} Bottles
-                                    </Col>
-                                </Row>
-                                <Row>
-                                    <Col>
-                                        {!total ? spin : total} Beers Available
-                                    </Col>
-                                </Row>
-                            </Container>
-                        </Paper>
+                            <Toolbar>
+                                <Space size={30}>
+                                    <FormGroup row>
+                                        <Space size={15}>
+                                            <FormControlLabel
+                                                control={
+                                                    <Switch
+                                                        checked={
+                                                            this.state.isNC
+                                                        }
+                                                        onChange={
+                                                            this.onNCChange
+                                                        }
+                                                        name="isNC"
+                                                        color="primary"
+                                                    />
+                                                }
+                                                label="NC Only"
+                                            />
+                                            <FormControlLabel
+                                                control={
+                                                    <Select
+                                                        labelId="demo-mutiple-name-label"
+                                                        id="demo-mutiple-name"
+                                                        multiple
+                                                        value={
+                                                            this.state
+                                                                .includeOnly
+                                                        }
+                                                        onChange={
+                                                            this
+                                                                .onContainerChange
+                                                        }
+                                                        input={<Input />}
+                                                        MenuProps={MenuProps}
+                                                    >
+                                                        <MenuItem
+                                                            key="drafts"
+                                                            value="draught"
+                                                        >
+                                                            Drafts
+                                                        </MenuItem>
+                                                        <MenuItem
+                                                            key="bottles"
+                                                            value="bottled"
+                                                        >
+                                                            Bottles
+                                                        </MenuItem>
+                                                        <MenuItem
+                                                            key="cans"
+                                                            value="can"
+                                                        >
+                                                            Cans
+                                                        </MenuItem>
+                                                        <MenuItem
+                                                            key="flights"
+                                                            value="flight"
+                                                        >
+                                                            Flights
+                                                        </MenuItem>
+                                                    </Select>
+                                                }
+                                                label="Include Only"
+                                            />
+                                            <FormControlLabel
+                                                control={
+                                                    <Container fluid>
+                                                        <Row>
+                                                            <Col
+                                                                style={{
+                                                                    display:
+                                                                        "inline-block",
+                                                                    padding: 10,
+                                                                }}
+                                                            >
+                                                                {!drafts
+                                                                    ? spin
+                                                                    : drafts}{" "}
+                                                                Drafts
+                                                            </Col>
+                                                            <Col
+                                                                style={{
+                                                                    display:
+                                                                        "inline-block",
+                                                                    padding: 10,
+                                                                }}
+                                                            >
+                                                                {!cans
+                                                                    ? spin
+                                                                    : cans}{" "}
+                                                                Cans
+                                                            </Col>
+                                                            <Col
+                                                                style={{
+                                                                    display:
+                                                                        "inline-block",
+                                                                    padding: 10,
+                                                                }}
+                                                            >
+                                                                {!bottles
+                                                                    ? spin
+                                                                    : bottles}{" "}
+                                                                Bottles
+                                                            </Col>
+                                                            <Col
+                                                                style={{
+                                                                    display:
+                                                                        "inline-block",
+                                                                    padding: 10,
+                                                                }}
+                                                            >
+                                                                {!total
+                                                                    ? spin
+                                                                    : total}{" "}
+                                                                Beers Available
+                                                            </Col>
+                                                        </Row>
+                                                    </Container>
+                                                }
+                                                label=""
+                                            />
+                                        </Space>
+                                    </FormGroup>
+                                </Space>
+                            </Toolbar>
+                        </AppBar>
                     </div>
                     <div
                         style={{
                             display: "block",
                             width: "100%",
                             height: "auto",
-                            textAlign: !beerlist ? 'center' : 'left'
+                            textAlign: !this.state.beerlist ? "center" : "left",
                         }}
                     >
-                        {!beerlist ? (
+                        {!this.state.beerlist ? (
                             <Spin
-                                indicator={<LoadingOutlined style={{ fontSize: 80 }} spin />}
+                                indicator={
+                                    <LoadingOutlined
+                                        style={{ fontSize: 80 }}
+                                        spin
+                                    />
+                                }
                                 style={{
-                                    marginTop: 200
+                                    marginTop: 200,
                                 }}
                             />
                         ) : (
-                            <Beers beerlist={beerlist} />
+                            <Beers beerlist={this.state.beerlist} />
                         )}
                     </div>
                 </>
