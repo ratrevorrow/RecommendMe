@@ -4,29 +4,12 @@ import Beer from "./beer";
 
 import "./style.css";
 
-export default class Beers extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            beerlist: null,
-        };
-    }
-
-    componentDidMount() {
-        this.setState({ beerlist: this.props.beerlist });
-    }
-
-    render() {
-        return (
-            this.state.beerlist && (
-                <>
-                    <List
-                        itemLayout="horizontal"
-                        dataSource={this.state.beerlist}
-                        renderItem={(beer) => <Beer beer={beer} />}
-                    />
-                </>
-            )
-        );
-    }
+export default function Beers({ beerlist }) {
+    return (
+        <List
+            itemLayout="horizontal"
+            dataSource={beerlist}
+            renderItem={(beer) => <Beer beer={beer} />}
+        />
+    );
 }

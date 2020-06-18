@@ -69,15 +69,14 @@ class Welcome extends React.Component {
         fetch(urls.BEERLIST.concat("/get_three_random_beers"), requestOptions)
             .then((res) => res.json())
             .then((beers) => {
-                let brews = [];
-                for (let i in beers) {
-                    brews.push(
-                        <div key={i}>
-                            <Beer beer={beers[i]} />
+                this.setState({
+                    brews: beers.map((beer, idx) => (
+                        <div key={idx}>
+                            <Beer beer={beer} />
                         </div>
-                    );
-                }
-                this.setState({ brews: brews, showNotification: true });
+                    )),
+                    showNotification: true,
+                });
                 setTimeout(
                     () => this.setState({ showNotification: false }),
                     3000
