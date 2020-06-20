@@ -1,86 +1,72 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Menu, Layout } from "antd";
-import { Switch, Route, Link, useHistory } from "react-router-dom";
+import { Switch, Route, Link, useHistory, useLocation } from "react-router-dom";
 import Welcome from "../welcome/index";
 import Beerlist from "../beerlist/index";
 import BeersTasted from "../tasted/index";
 import Login from "../login/index";
 import { connect } from "react-redux";
 
+import "./style.css";
+
 const { Header } = Layout;
+
+const navItems = [
+    { key: "1", label: "RecommendME", path: "/", show: true },
+    { key: "2", label: "Beerlist", path: "/beerlist", show: true },
+    { key: "3", label: "Beers Tasted", path: "/tasted", show: false },
+];
 
 // TODO: implement dark mode option
 // TODO: Make mobile friendly: https://material-ui.com/components/app-bar/
-class Navbar extends React.Component {
-    state = {
-        current: "1",
-    };
+const Navbar = ({ user }) => {
+    const location = useLocation();
+    const history = useHistory();
+    const [current, setCurrent] = useState(navItems.find((item) => location.pathname.startsWith(item.path)).key);
 
-    constructor(props) {
-        super(props);
-        const pathname = window.location.pathname;
-        this.setState({
-            current:
-                pathname === "/beerlist"
-                    ? "2"
-                    : pathname === "/tasted"
-                    ? "3"
-                    : "1",
-        });
-    }
+    const onClickMenu = (_item) => history.push(navItems.find((item) => item.key === _item.key));
 
-    handleClick = (e) => {
-        this.setState({
-            current: e.key,
-        });
-    };
+    useEffect(() => {
+        setCurrent(navItems.find((item) => location.pathname === item.path).key);
+    }, [location]);
 
-    render() {
-        const { user } = this.props;
-        return (
-            <>
-                <Layout>
-                    <Header style={{ backgroundColor: "white" }}>
-                        <div className="logo" />
-                        <Menu
-                            onClick={this.handleClick}
-                            selectedKeys={[this.state.current]}
-                            mode="horizontal"
-                            theme="light"
-                            style={{ lineHeight: "64px" }}
-                        >
-                            <Menu.Item key="1">
-                                <Link to="/">Home</Link>
-                            </Menu.Item>
-                            <Menu.Item key="2">
-                                <Link to="/beerlist">Beerlist</Link>
-                            </Menu.Item>
-                            {user && (
-                                <Menu.Item key="3">
-                                    <Link to="/tasted">Beers Tasted</Link>
-                                </Menu.Item>
-                            )}
+    navItems[2].show = user ? "true" : false;
 
-                            <div style={{ float: "right" }}>
-                                <Login />
-                            </div>
-                        </Menu>
-                    </Header>
-                </Layout>
+    return (
+        <>
+            <Layout>
+                <Header style={{ backgroundColor: "white" }}>
+                    {/* <div className='logo' /> */}
+                    <Menu
+                        onClick={onClickMenu}
+                        selectedKeys={[current]}
+                        mode='horizontal'
+                        theme='light'
+                        className='lh-64'
+                    >
+                        {navItems.map(
+                            (item) =>
+                                item.show && (
+                                    <Menu.Item key={item.key}>
+                                        <Link to={item.path}>{item.label}</Link>
+                                    </Menu.Item>
+                                )
+                        )}
 
-                <Switch>
-                    <Route exact path="/" component={Welcome} />
-                    <Route path="/beerlist" component={Beerlist} />
-                    <Route path="/tasted" component={BeersTasted} />
-                </Switch>
-            </>
-        );
-    }
-}
+                        <div className='float-right'>
+                            <Login />
+                        </div>
+                    </Menu>
+                </Header>
+            </Layout>
 
-function mapState(state) {
-    const { user } = state.authentication;
-    return { user };
-}
+            <Switch>
+                <Route exact path='/' component={Welcome} />
+                <Route path='/beerlist' component={Beerlist} />
+                <Route path='/tasted' component={BeersTasted} />
+            </Switch>
+        </>
+    );
+};
 
-export default connect(mapState)(Navbar);
+export default connect((state) => ({ ...state.authentication }))(Navbar);
