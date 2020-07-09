@@ -14,3 +14,4 @@ frontend/yarn-lock.json
 frontend/node_modules
 backend/beerlist/__pycache__/*.pyc
 backend/users/__pycache__/*.pyc
+frontend/public/.DS_Store

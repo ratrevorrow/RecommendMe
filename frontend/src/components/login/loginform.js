@@ -79,11 +79,7 @@ class LoginForm extends React.Component {
 							message: "Please input your password",
 						},
 					]}>
-					<Input
-						prefix={<VpnKey />}
-						type='password'
-						placeholder='Password'
-					/>
+					<Input prefix={<VpnKey />} type='password' placeholder='Password' />
 				</Form.Item>
 				{this.state.isRegisterClicked ? (
 					<></>
@@ -123,10 +119,7 @@ class LoginForm extends React.Component {
 	}
 }
 
-function mapState(state) {
-	const { pending, success, error } = state.registration;
-	return { pending, success, error };
-}
+const mapState = state => ({ ...state.registration });
 
 const actionCreators = {
 	register: userActions.register,

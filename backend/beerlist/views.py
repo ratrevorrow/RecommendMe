@@ -22,7 +22,7 @@ def get_everything(request):
     Returns:
         Response -- beers object containing the formatted beerlist with adjectives
     """
-    return Response({"beers": initiators.get_everything()})
+    return Response({"beers": initiators.get_everything()}, status=HTTP_200_OK)
 
 
 @api_view(['GET'])
@@ -47,13 +47,35 @@ def get_three_random_beers(request):
     data = JSONParser().parse(request)
     beerlist = initiators.get_beerlist()
     if not request.user.is_anonymous:
-        beers_tasted = json.loads(json.dumps(list(BeerTasted.objects.filter(user=request.user).values('beername')), cls=DjangoJSONEncoder))
-        beerlist = [beer for beer in beerlist if beer['name'] not in [beer['beername'] for beer in beers_tasted]]
+        beers_tasted = list(BeerTasted.objects.filter(
+            user=request.user).values('beername'))
+        beerlist = [beer for beer in beerlist if beer['name']
+                    not in [beer['beername'] for beer in beers_tasted]]
 
     include_only = data['includeOnly']
+    include_styles = data['includeStyles']
     # if the length is 4, then it's the entire beerlist; no point searching
     if len(include_only) > 0 and len(include_only) != 4:
-        beerlist = [beer for beer in beerlist if beer['container'] in include_only]
+        beerlist = [
+            beer for beer in beerlist if beer['container'] in include_only]
     if data['isNC']:
         beerlist = [beer for beer in beerlist if beer['isNC']]
-    return Response(random.sample(beerlist, 3), status=HTTP_200_OK)
+    if len(include_styles) > 0:
+        beerlist = [beer for beer in beerlist if beer['style']
+                    in include_styles]
+    obj = []
+    if len(beerlist) >= 3:
+        obj = random.sample(beerlist, 3)
+    else:
+        obj = beerlist
+    return Response(obj, status=HTTP_200_OK)
+
+
+@api_view(['POST'])
+def get_three_tailored_beers(request):
+    """Get three tailored beers from the beerlist
+
+    Returns:
+        Response -- 3 tailored beers
+    """
+    return Response("", status=HTTP_200_OK)

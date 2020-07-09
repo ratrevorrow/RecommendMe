@@ -1,5 +1,4 @@
 import React from "react";
-// import PreferredForm from "./form";
 import { connect } from "react-redux";
 import QueueAnim from "rc-queue-anim";
 import { urls } from "../../services/urls";
@@ -20,18 +19,7 @@ import {
 import { Refresh } from "@material-ui/icons";
 import Beer from "../beerlist/beer";
 import { authHeader } from "../../store/helpers/auth-header";
-
-// TODO: refactor
-const ITEM_HEIGHT = 48;
-const ITEM_PADDING_TOP = 8;
-const MenuProps = {
-	PaperProps: {
-		style: {
-			maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
-			width: 250,
-		},
-	},
-};
+import { MenuProps } from "./constants";
 
 class Welcome extends React.Component {
 	constructor(props) {
@@ -42,9 +30,9 @@ class Welcome extends React.Component {
 			isNC: false,
 			draftsOnly: false,
 			includeOnly: [],
+			includeStyles: []
 		};
 		this.get3RandomBeers = this.get3RandomBeers.bind(this);
-		this.handleClose = this.handleClose.bind(this);
 	}
 
 	componentDidMount() {
@@ -53,7 +41,7 @@ class Welcome extends React.Component {
 
 	get3RandomBeers() {
 		this.setState({ brews: null });
-
+		console.log(this.state.includeStyles);
 		const requestOptions = {
 			method: "POST",
 			headers: {
@@ -62,6 +50,7 @@ class Welcome extends React.Component {
 			},
 			body: JSON.stringify({
 				includeOnly: this.state.includeOnly,
+				includeStyles: this.state.includeStyles,
 				isNC: this.state.isNC,
 			}),
 		};
@@ -81,11 +70,39 @@ class Welcome extends React.Component {
 			});
 	}
 
-	handleClose = () => {
-		this.setState({ showNotification: false });
-	};
+	get3TailoredBeers() {
+		this.setState({ brews: null });
+
+		const requestOptions = {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+				...authHeader(),
+			},
+			body: JSON.stringify({
+				includeOnly: this.state.includeOnly,
+				isNC: this.state.isNC,
+			}),
+		};
+
+		fetch(urls.BEERLIST.concat("/get_three_tailored_beers"), requestOptions)
+			.then(res => res.json())
+			.then(beers => {
+				this.setState({
+					brews: beers.map((beer, idx) => (
+						<div key={idx}>
+							<Beer beer={beer} />
+						</div>
+					)),
+					showNotification: true,
+				});
+				setTimeout(() => this.setState({ showNotification: false }), 3000);
+			});
+	}
 
 	render() {
+		// console.log("getting all data");
+		// console.log(this.props.styles);
 		return (
 			<div
 				style={{
@@ -99,7 +116,16 @@ class Welcome extends React.Component {
 								variant='contained'
 								color='primary'
 								endIcon={<Refresh />}>
-								Refresh Brews
+								Random
+							</Button>
+
+							<Button
+								onClick={this.get3RandomBeers}
+								variant='contained'
+								color='default'
+								style={{ display: !this.props.user && "none" }}
+								endIcon={<Refresh />}>
+								Tailored
 							</Button>
 
 							<FormGroup row>
@@ -149,12 +175,32 @@ class Welcome extends React.Component {
 										}
 										label='Include Only'
 									/>
+									<FormControlLabel
+										control={
+											<Select
+												multiple
+												value={this.state.includeStyles}
+												onChange={e =>
+													this.setState({
+														includeStyles: e.target.value,
+													})
+												}
+												input={<Input />}
+												MenuProps={MenuProps}>
+												{this.props.styles.map(style => (
+													<MenuItem key={style} value={style}>
+														{style}
+													</MenuItem>
+												))}
+											</Select>
+										}
+										label='Styles'
+									/>
 								</Space>
 							</FormGroup>
 						</Space>
 					</Toolbar>
 				</AppBar>
-				{/* <PreferredForm /> */}
 				{!this.state.brews ? (
 					<Spin
 						indicator={<LoadingOutlined style={{ fontSize: 80 }} spin />}
@@ -170,7 +216,7 @@ class Welcome extends React.Component {
 				<Snackbar
 					anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
 					open={this.state.showNotification}
-					onClose={this.handleClose}
+					onClose={() => this.setState({ showNotification: false })}
 					message='Generated 3 random beers'
 					// key={vertical + horizontal}
 				/>
@@ -180,8 +226,11 @@ class Welcome extends React.Component {
 }
 
 function mapState(state) {
-	const { pending, success, error, user } = state.authentication;
-	return { pending, success, error, user };
+	const { alldata, pending, error } = state.beerlist;
+	if (alldata) {
+		return { ...alldata, ...state.authentication };
+	}
+	return { pending, error, ...state.authentication };
 }
 
 export default connect(mapState)(Welcome);

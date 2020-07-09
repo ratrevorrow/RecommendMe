@@ -4,8 +4,6 @@ import bottle from "../../resources/bottle.jpeg";
 import pint from "../../resources/pint.jpeg";
 import can from "../../resources/can.jpeg";
 import flight from "../../resources/flight.jpg";
-// import { userActions } from "../../store/actions/user";
-// import { connect } from "react-redux";
 import { authHeader } from "../../store/helpers/auth-header";
 import { userService } from "../../services/user";
 import { urls } from "../../services/urls";

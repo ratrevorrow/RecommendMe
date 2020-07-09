@@ -39,7 +39,7 @@ Using [this](https://www.enterprisedb.com/postgres-tutorials/how-use-postgresql-
 20. Refer to [this](https://django-oauth-toolkit.readthedocs.io/en/latest/tutorial/tutorial_01.html) for oauth setup.
 
 Run application with step 13: `python manage.py runserver 0.0.0.0:5000`.
-Run it with secure ssl: `python manage.py runsslserver 0.0.0.0:5000`
+<!-- Run it with secure ssl: `python manage.py runsslserver 0.0.0.0:5000` -->
 
 1. [Deploy app on Heroku tutorial1](https://medium.com/@hdsingh13/deploying-django-app-on-heroku-with-postgres-as-backend-b2f3194e8a43)
 2. [Deploy app on Heroku tutorial2](https://medium.com/@BennettGarner/deploying-django-to-heroku-connecting-heroku-postgres-fcc960d290d1)

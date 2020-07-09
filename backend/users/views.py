@@ -12,6 +12,7 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.models import User
 from django.db.models import Count
+
 from rest_framework.authtoken.models import Token
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.parsers import JSONParser
@@ -24,6 +25,7 @@ from rest_framework.status import (HTTP_200_OK, HTTP_201_CREATED,
 from users.models import BeerTasted
 from users.serializers import LoginSerializer, RegisterSerializer
 
+from .util import train_data
 
 # Create your views here.
 @csrf_exempt
@@ -79,6 +81,10 @@ def add_beer_tasted(request):
     try:
         BeerTasted.objects.create(beername=data['beername'], rating=data['rating'],
                                   style=data['style'], description=data['description'], user=request.user)
+        # train data after adding beer to DB. TODO: run async process
+        # print('training data')
+        # train_data(request.user)
+        # print('trained data')
         return Response({"response": "Beer entry saved"}, status=HTTP_201_CREATED)
     except:
         return Response({"error": "Unable to save beer tasted"}, status=HTTP_400_BAD_REQUEST)
