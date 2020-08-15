@@ -8,30 +8,12 @@ import { connect } from "react-redux";
 // remove any potential cached user or token values.
 userActions.logout();
 
-function App(props) {
-	useEffect(() => {
-		props.getAll();
-	}, []);
-    
-	return props.styles ? (
+export default function App() {
+	return (
 		<div className='App'>
 			<BrowserRouter>
 				<Navbar />
 			</BrowserRouter>
 		</div>
-	) : <>Pending</>;
+	);
 }
-
-function mapState(state) {
-	const { alldata, pending, error } = state.beerlist;
-	if (alldata) {
-		return { ...alldata };
-	}
-	return { pending, error };
-}
-
-const actionCreators = {
-	getAll: userActions.getAll,
-};
-
-export default connect(mapState, actionCreators)(App);

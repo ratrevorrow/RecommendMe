@@ -25,7 +25,7 @@ from rest_framework.status import (HTTP_200_OK, HTTP_201_CREATED,
 from users.models import BeerTasted
 from users.serializers import LoginSerializer, RegisterSerializer
 
-from .util import train_data
+# from .util import train_data
 
 # Create your views here.
 @csrf_exempt
@@ -75,8 +75,8 @@ def add_beer_tasted(request):
     Returns:
         Response -- a success message on beer tasted saved, or error
     """
-    permission_classes = (IsAuthenticated,)
-    authentication_classes = (TokenAuthentication)
+    # permission_classes = (IsAuthenticated,)
+    # authentication_classes = (TokenAuthentication)
     data = JSONParser().parse(request)
     try:
         BeerTasted.objects.create(beername=data['beername'], rating=data['rating'],
@@ -98,8 +98,8 @@ def get_tasted_beers(request):
     Returns:
         JsonResponse -- a list of objects that contains beers tasted
     """
-    permission_classes = (IsAuthenticated,)
-    authentication_classes = (TokenAuthentication)
+    # permission_classes = (IsAuthenticated,)
+    # authentication_classes = (TokenAuthentication)
     data = BeerTasted.objects.filter(user=request.user).values(
         'beername', 'rating', 'created_at', 'style', 'description', count=Count('beername')).order_by('created_at')
 
@@ -126,7 +126,7 @@ def get_tasted_beers(request):
         })
 
     graphdata.sort(key=itemgetter('count'), reverse=True)
-
+    
     return_object = {
         'beers': beers_tasted,
         'graphdata': graphdata

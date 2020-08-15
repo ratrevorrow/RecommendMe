@@ -30,7 +30,7 @@ class Welcome extends React.Component {
 			isNC: false,
 			draftsOnly: false,
 			includeOnly: [],
-			includeStyles: []
+			includeStyles: [],
 		};
 		this.get3RandomBeers = this.get3RandomBeers.bind(this);
 	}
@@ -41,7 +41,7 @@ class Welcome extends React.Component {
 
 	get3RandomBeers() {
 		this.setState({ brews: null });
-		console.log(this.state.includeStyles);
+
 		const requestOptions = {
 			method: "POST",
 			headers: {
@@ -70,39 +70,7 @@ class Welcome extends React.Component {
 			});
 	}
 
-	get3TailoredBeers() {
-		this.setState({ brews: null });
-
-		const requestOptions = {
-			method: "POST",
-			headers: {
-				"Content-Type": "application/json",
-				...authHeader(),
-			},
-			body: JSON.stringify({
-				includeOnly: this.state.includeOnly,
-				isNC: this.state.isNC,
-			}),
-		};
-
-		fetch(urls.BEERLIST.concat("/get_three_tailored_beers"), requestOptions)
-			.then(res => res.json())
-			.then(beers => {
-				this.setState({
-					brews: beers.map((beer, idx) => (
-						<div key={idx}>
-							<Beer beer={beer} />
-						</div>
-					)),
-					showNotification: true,
-				});
-				setTimeout(() => this.setState({ showNotification: false }), 3000);
-			});
-	}
-
 	render() {
-		// console.log("getting all data");
-		// console.log(this.props.styles);
 		return (
 			<div
 				style={{
@@ -175,7 +143,7 @@ class Welcome extends React.Component {
 										}
 										label='Include Only'
 									/>
-									<FormControlLabel
+									{/* <FormControlLabel
 										control={
 											<Select
 												multiple
@@ -187,15 +155,16 @@ class Welcome extends React.Component {
 												}
 												input={<Input />}
 												MenuProps={MenuProps}>
-												{this.props.styles.map(style => (
-													<MenuItem key={style} value={style}>
-														{style}
-													</MenuItem>
-												))}
+												{this.props.styles &&
+													this.props.styles.map(style => (
+														<MenuItem key={style} value={style}>
+															{style}
+														</MenuItem>
+													))}
 											</Select>
 										}
 										label='Styles'
-									/>
+									/> */}
 								</Space>
 							</FormGroup>
 						</Space>

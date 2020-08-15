@@ -1,7 +1,4 @@
 import random
-import json
-from django.http import JsonResponse
-from django.core.serializers.json import DjangoJSONEncoder
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
 from rest_framework.status import HTTP_200_OK

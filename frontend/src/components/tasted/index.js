@@ -50,7 +50,7 @@ class BeersTasted extends React.Component {
 				(beer, idx) =>
 					(beer.rating = <Rate disabled allowHalf defaultValue={parseFloat(beer.rating)} key={idx} />)
 			);
-			beersTasted = beers;
+			beersTasted = beers.reverse();
 			graphs = graphdata;
 		}
 		// let graphs = this.props.data ? ({ graphdata } = this.props.data) : null;
