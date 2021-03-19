@@ -12,7 +12,7 @@ Django==3.0.7
 django-cors-headers==3.2.1
 django-rest-knox==4.1.0
 django-sslserver==0.22
-djangorestframework==3.11.0
+djangorestframework==3.11.2
 https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-2.2.0/en_core_web_sm-2.2.0.tar.gz#egg=en_core_web_sm
 gunicorn==20.0.4
 idna==2.9
